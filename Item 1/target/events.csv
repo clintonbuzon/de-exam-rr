@@ -1,0 +1,3 @@
+event_date,event_timestamp,event_name,ga_session_id,engaged_session_event,page_location,page_title,page_referrer,source
+20231005,1696470452486466,scroll,123526748,1,https://mobile.deexam.ph/,J's Angels,,
+20231005,1696470418877027,page_view,84321567,1,https://web.deexam.ph/,SuperJ,http://m.facebook.com/,m.facebook.com

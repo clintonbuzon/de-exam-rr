@@ -1,5 +1,18 @@
 # README
 
+## You can run this on github codespaces or your local environment
+
+### Github codespace
+
+Create codespace on main
+
+![Screenshot1](Screenshots/Github_codespace_1.png)
+
+Run commands in codespace terminal
+
+![Screenshot2](Screenshots/Github_codespace_2.png)
+
+
 ## Prerequisites
 
 Before running the solutions or tests, ensure you have the following installed:
