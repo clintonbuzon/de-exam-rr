@@ -1,0 +1,10 @@
+You are given three datasets. 
+
+
+(1) date.csv : 2023-01-01 to 2023-02-14
+(2) stores.csv
+(3) fsl.csv: Contains Sales
+
+You are tasked to create STORE VIEW showing Year-To-Date, Month-To-Date, and Week-To-Date sales.
+You may use SQL or PYTHON scripts.  
+
