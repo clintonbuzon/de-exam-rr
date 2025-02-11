@@ -1,48 +1,47 @@
 # README
 
-## You can run this on github codespaces or your local environment
+## You can run this on GitHub Codespaces or your local environment
 
-### Github codespace
+### GitHub Codespace
 
-Create codespace on main
+Create a codespace on the `main` branch.
 
 ![Screenshot1](Screenshots/Github_codespace_1.png)
 
-Run commands in codespace terminal
+Run commands in the codespace terminal.
 
 ![Screenshot2](Screenshots/Github_codespace_2.png)
 
 
 ## Prerequisites
 
-Before running the solutions or tests, ensure you have the following installed:
+Before running the solutions or tests, ensure that you have the following installed:
 
 - Python 3.x
 - `pip` (Python package installer)
 
-Install the required Python packages by running:
+You can install the required Python packages by running:
 
 ```sh
 pip install pytest pytest-cov pandas
 ```
 
-## Developer notes
+## Developer Notes
 
-- Both test items require some sort of database
-- I've opted with using SQLite database since this is already comes with python and the requirements are light 
-- This saves time for the reviewer so that they wouldn't need to setup a database/host/ports/etc just to run the solutions
-- Also used `pandas` in one of the solution for ease of use and since `pandas` is one of the reliable standards when it comes to processing small amounts of data without the need for distributed processing
-- Would have opted for `pyspark` if data processed is massive
+- Both test items require some sort of database.
+- I’ve chosen to use an SQLite database since it comes with Python by default, and the requirements are light.
+- This approach saves time for the reviewer, as they won’t need to set up a database, host, ports, etc., just to run the solutions.
+- I’ve also used pandas in one of the solutions for ease of use, as it is a reliable standard for processing small amounts of data without the need for distributed processing.
+- I would have opted for pyspark if the data processed were massive.
 
 
 ## Running the Solutions
 
 ### Item 1
 
-Note: the provided `events.ndjson` seems to be corrupted with missing brackets and lines not in json format. I've cleaned this manually so that source data is clean.
+Note: The provided events.ndjson file appears to be corrupted, with missing brackets and lines that aren't in JSON format. I’ve manually cleaned this file so that the source data is in a proper format.
 
-To run the `solution.py` file in `Item 1`, follow these steps:
-
+To run the solution.py file in Item 1, follow these steps:
 ```sh
 cd "Item 1"
 python solution.py
@@ -50,11 +49,11 @@ python solution.py
 
 This will:
 
-- Create a SQLite database
-- Process the NDJSON events file from `source/events.ndjson` to database
-- Export results to target/events.csv
+- Create an SQLite database.
+- Process the NDJSON events file from source/events.ndjson and load it into the database.
+- Export the results to target/events.csv.
 
-Optionally you can run the following command to start sql terminal on the created database:
+Optionally, you can run the following command to start an SQL terminal on the created database:
 
 ```sh
 sqlite3 events.db
@@ -63,7 +62,7 @@ SELECT * FROM events_table;
 
 ### Item 2
 
-To run the `solution.py` file in `Item 2`, follow these steps:
+To run the solution.py file in Item 2, follow these steps:
 
 ```sh
 cd "Item 2"
@@ -72,12 +71,12 @@ python solution.py
 
 This will:
 
-- Create a SQLite database
-- Load data from CSV files (date.csv, stores.csv, fsl.csv)
-- Create view with YTD/MTD/WTD sales calculations
-- Print out results of view
+- Create an SQLite database.
+- Load data from CSV files (date.csv, stores.csv, fsl.csv).
+- Create a view with YTD/MTD/WTD sales calculations.
+- Print out the results from the view.
 
-Optionally you can run the following command to start sql terminal on the created database:
+Optionally, you can run the following command to start an SQL terminal on the created database:
 
 ```sh
 sqlite3 sales.db
