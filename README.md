@@ -103,23 +103,23 @@ Assuming current date is `2023-02-14`
 (44557, '2ddcb26f', 'e3df592e', 9888081.02, 2777991.0300000003, 321203.0)
 ```
 
-`store_sales_view_ytd` results:
+`store_sales_view_yearly` results:
 ```
-['STORE_KEY', 'STORE_CODE', 'STORE_DESCRIPTION', 'YEAR', 'YTD_SALES']
+['STORE_KEY', 'STORE_CODE', 'STORE_DESCRIPTION', 'YEAR', 'YEARLY_SALES']
 (44538, 'd7d38f0c', '3db96c1c', '2023', 17742293.79)
 (44557, '2ddcb26f', 'e3df592e', '2023', 9888081.02)
 ```
 
-`store_sales_view_mtd` results:
+`store_sales_view_monthly` results:
 ```
-['STORE_KEY', 'STORE_CODE', 'STORE_DESCRIPTION', 'YEAR_MONTH', 'MTD_SALES']
+['STORE_KEY', 'STORE_CODE', 'STORE_DESCRIPTION', 'YEAR_MONTH', 'MONTHLY_SALES']
 (44538, 'd7d38f0c', '3db96c1c', '2023-01', 12628853.34)
 (44538, 'd7d38f0c', '3db96c1c', '2023-02', 5113440.45)
 (44557, '2ddcb26f', 'e3df592e', '2023-01', 7110089.99)
 (44557, '2ddcb26f', 'e3df592e', '2023-02', 2777991.0300000003)
 ```
 
-`store_sales_view_ytd` results:
+`store_sales_view_weekly` results:
 ```
 ['STORE_KEY', 'STORE_CODE', 'STORE_DESCRIPTION', 'YEAR', 'WEEK', 'WEEKLY_SALES']
 (44538, 'd7d38f0c', '3db96c1c', '2023', '00', 757826.75)

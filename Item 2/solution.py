@@ -39,14 +39,14 @@ GROUP BY
 ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION;
 """
 
-CREATE_VIEW_SQL_YTD = f"""
-CREATE VIEW store_sales_view_ytd AS
+CREATE_VIEW_SQL_YEARLY = f"""
+CREATE VIEW store_sales_view_yearly AS
 SELECT
     s.STORE_KEY,
     s.STORE_CODE,
     s.STORE_DESCRIPTION,
     strftime('%Y', d.DATE_FLD) as YEAR,
-    SUM(f.SALE_NET_VAL) AS YTD_SALES
+    SUM(f.SALE_NET_VAL) AS YEARLY_SALES
 FROM
     stores_table s
 JOIN
@@ -58,14 +58,14 @@ GROUP BY
 ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, YEAR;
 """
 
-CREATE_VIEW_SQL_MTD = f"""
-CREATE VIEW store_sales_view_mtd AS
+CREATE_VIEW_SQL_MONTHLY = f"""
+CREATE VIEW store_sales_view_monthly AS
 SELECT
     s.STORE_KEY,
     s.STORE_CODE,
     s.STORE_DESCRIPTION,
     strftime('%Y-%m', d.DATE_FLD) as YEAR_MONTH,
-    SUM(f.SALE_NET_VAL) AS MTD_SALES
+    SUM(f.SALE_NET_VAL) AS MONTHLY_SALES
 FROM
     stores_table s
 JOIN
@@ -77,8 +77,8 @@ GROUP BY
 ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, YEAR_MONTH;
 """
 
-CREATE_VIEW_SQL_WTD = f"""
-CREATE VIEW store_sales_view_wtd AS
+CREATE_VIEW_SQL_WEEKLY = f"""
+CREATE VIEW store_sales_view_weekly AS
 SELECT
     s.STORE_KEY,
     s.STORE_CODE,
@@ -146,9 +146,9 @@ def _create_views():
     cursor = conn.cursor()
 
     cursor.executescript(CREATE_VIEW_SQL)
-    cursor.executescript(CREATE_VIEW_SQL_YTD)
-    cursor.executescript(CREATE_VIEW_SQL_MTD)
-    cursor.executescript(CREATE_VIEW_SQL_WTD)
+    cursor.executescript(CREATE_VIEW_SQL_YEARLY)
+    cursor.executescript(CREATE_VIEW_SQL_MONTHLY)
+    cursor.executescript(CREATE_VIEW_SQL_WEEKLY)
     logging.info("Executed SQL scripts to create view")
 
     conn.commit()
@@ -157,14 +157,14 @@ def _create_views():
     logging.info("Selecting data from view store_sales_view")
     _print_view_results(cursor, "store_sales_view")
 
-    logging.info("Selecting data from view store_sales_view_ytd")
-    _print_view_results(cursor, "store_sales_view_ytd")
+    logging.info("Selecting data from view store_sales_view_yearly")
+    _print_view_results(cursor, "store_sales_view_yearly")
 
-    logging.info("Selecting data from view store_sales_view_mtd")
-    _print_view_results(cursor, "store_sales_view_mtd")
+    logging.info("Selecting data from view store_sales_view_monthly")
+    _print_view_results(cursor, "store_sales_view_monthly")
 
-    logging.info("Selecting data from view store_sales_view_wtd")
-    _print_view_results(cursor, "store_sales_view_wtd")
+    logging.info("Selecting data from view store_sales_view_weekly")
+    _print_view_results(cursor, "store_sales_view_weekly")
 
     conn.close()
     logging.info("View creation and data selection completed")
