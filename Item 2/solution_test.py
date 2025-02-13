@@ -2,7 +2,7 @@ import os
 import sqlite3
 import pandas as pd
 import pytest
-from solution import _delete_db_if_exists, _load_data, _create_view, main
+from solution import _delete_db_if_exists, _load_data, _create_views, main
 
 
 @pytest.fixture
@@ -133,7 +133,7 @@ def test_load_data(setup_environment, monkeypatch):
     conn.close()
 
 
-def test_create_view(setup_environment, monkeypatch):
+def test_create_views(setup_environment, monkeypatch):
     paths = setup_environment
 
     monkeypatch.setattr("solution.date_csv_path", paths["date_csv_path"])
@@ -143,7 +143,7 @@ def test_create_view(setup_environment, monkeypatch):
 
     _load_data()
 
-    _create_view()
+    _create_views()
 
     conn = sqlite3.connect(paths["db_file_path"])
     cursor = conn.cursor()

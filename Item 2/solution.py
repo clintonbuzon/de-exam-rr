@@ -23,21 +23,78 @@ SELECT
     s.STORE_CODE,
     s.STORE_DESCRIPTION,
     -- Year-to-date sales
-    SUM(CASE WHEN d.DATE_FLD BETWEEN strftime('%Y-01-01', '{CURRENT_DATE}') AND '{CURRENT_DATE}' THEN f.SALE_NET_VAL ELSE 0 END) AS YTD_SALES,
+    SUM(CASE WHEN strftime('%Y', d.DATE_FLD) = strftime('%Y', '{CURRENT_DATE}') THEN f.SALE_NET_VAL ELSE 0 END) AS YTD_SALES,
     -- Month-to-date sales
     SUM(CASE WHEN strftime('%Y-%m', d.DATE_FLD) = strftime('%Y-%m', '{CURRENT_DATE}') THEN f.SALE_NET_VAL ELSE 0 END) AS MTD_SALES,
     -- Week-to-date sales (Monday to Sunday)
-    SUM(CASE WHEN d.DATE_FLD BETWEEN date('{CURRENT_DATE}', 'weekday 1', '-7 days') AND '{CURRENT_DATE}' THEN f.SALE_NET_VAL ELSE 0 END) AS WTD_SALES
+    SUM(CASE WHEN d.DATE_FLD BETWEEN date('{CURRENT_DATE}', 'weekday 0', '-6 days') AND date('{CURRENT_DATE}', 'weekday 0') THEN f.SALE_NET_VAL ELSE 0 END) AS WTD_SALES
 FROM
     stores_table s
 JOIN
     fsl_table f ON s.STORE_KEY = f.STORE_KEY
 JOIN
     date_table d ON f.DATE_KEY = d.DATE_KEY
-WHERE
-    strftime('%Y', d.DATE_FLD) = '2023'
 GROUP BY
-    s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION;
+    s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION
+ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION;
+"""
+
+CREATE_VIEW_SQL_YTD = f"""
+CREATE VIEW store_sales_view_ytd AS
+SELECT
+    s.STORE_KEY,
+    s.STORE_CODE,
+    s.STORE_DESCRIPTION,
+    strftime('%Y', d.DATE_FLD) as YEAR,
+    SUM(f.SALE_NET_VAL) AS YTD_SALES
+FROM
+    stores_table s
+JOIN
+    fsl_table f ON s.STORE_KEY = f.STORE_KEY
+JOIN
+    date_table d ON f.DATE_KEY = d.DATE_KEY
+GROUP BY
+    s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, strftime('%Y', d.DATE_FLD)
+ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, YEAR;
+"""
+
+CREATE_VIEW_SQL_MTD = f"""
+CREATE VIEW store_sales_view_mtd AS
+SELECT
+    s.STORE_KEY,
+    s.STORE_CODE,
+    s.STORE_DESCRIPTION,
+    strftime('%Y-%m', d.DATE_FLD) as YEAR_MONTH,
+    SUM(f.SALE_NET_VAL) AS MTD_SALES
+FROM
+    stores_table s
+JOIN
+    fsl_table f ON s.STORE_KEY = f.STORE_KEY
+JOIN
+    date_table d ON f.DATE_KEY = d.DATE_KEY
+GROUP BY
+    s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, strftime('%Y-%m', d.DATE_FLD)
+ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, YEAR_MONTH;
+"""
+
+CREATE_VIEW_SQL_WTD = f"""
+CREATE VIEW store_sales_view_wtd AS
+SELECT
+    s.STORE_KEY,
+    s.STORE_CODE,
+    s.STORE_DESCRIPTION,
+    strftime('%Y', d.DATE_FLD) as YEAR,
+    strftime('%W', d.DATE_FLD) as WEEK,
+    SUM(f.SALE_NET_VAL) AS WEEKLY_SALES
+FROM
+    stores_table s
+JOIN
+    fsl_table f ON s.STORE_KEY = f.STORE_KEY
+JOIN
+    date_table d ON f.DATE_KEY = d.DATE_KEY
+GROUP BY
+    s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, strftime('%Y', d.DATE_FLD), strftime('%W', d.DATE_FLD)
+ORDER BY s.STORE_KEY, s.STORE_CODE, s.STORE_DESCRIPTION, YEAR, WEEK;
 """
 
 
@@ -70,27 +127,44 @@ def _load_data():
     logging.info("Data loading completed")
 
 
-def _create_view():
+def _print_view_results(cursor, view_name):
+    cursor.execute(f"SELECT * FROM {view_name}")
+    rows = cursor.fetchall()
+
+    column_names = [description[0] for description in cursor.description]
+
+    logging.info(f"View data for {view_name}:")
+    logging.info(f"Column names: {column_names}")
+
+    for row in rows:
+        logging.info(row)
+
+
+def _create_views():
     logging.info("Creating view in SQLite database")
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
 
     cursor.executescript(CREATE_VIEW_SQL)
-    logging.info("Executed SQL script to create view")
+    cursor.executescript(CREATE_VIEW_SQL_YTD)
+    cursor.executescript(CREATE_VIEW_SQL_MTD)
+    cursor.executescript(CREATE_VIEW_SQL_WTD)
+    logging.info("Executed SQL scripts to create view")
 
     conn.commit()
 
     logging.info("View created successfully")
-    cursor.execute("SELECT * FROM store_sales_view")
-    rows = cursor.fetchall()
+    logging.info("Selecting data from view store_sales_view")
+    _print_view_results(cursor, "store_sales_view")
 
-    column_names = [description[0] for description in cursor.description]
+    logging.info("Selecting data from view store_sales_view_ytd")
+    _print_view_results(cursor, "store_sales_view_ytd")
 
-    logging.info("View data:")
-    logging.info(f"Column names: {column_names}")
+    logging.info("Selecting data from view store_sales_view_mtd")
+    _print_view_results(cursor, "store_sales_view_mtd")
 
-    for row in rows:
-        logging.info(row)
+    logging.info("Selecting data from view store_sales_view_wtd")
+    _print_view_results(cursor, "store_sales_view_wtd")
 
     conn.close()
     logging.info("View creation and data selection completed")
@@ -100,7 +174,7 @@ def main():
     logging.info("Starting the process")
     _delete_db_if_exists(db_file_path)
     _load_data()
-    _create_view()
+    _create_views()
     logging.info("Process completed successfully")
 
 
